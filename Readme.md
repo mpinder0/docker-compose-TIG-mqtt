@@ -57,6 +57,6 @@ See [telegraf.conf](telegraf.conf) with MQTT consumer as input, Influx DB as out
 ### Grafana
 - In browser go to "localhost:3000"
 - default user/password is admin/admin - you'll be prompted to change it on first login
-- add Influx DB as data source (http://influxdb:8083), database "telegraf"
+- add Influx DB as data source (http://influxdb:8086), database "telegraf"
 - create a dashboard to view your data! table "mqtt_consumer", topic is the mqtt topic you want to graph.
 
