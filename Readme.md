@@ -60,3 +60,8 @@ See [telegraf.conf](telegraf.conf) with MQTT consumer as input, Influx DB as out
 - add Influx DB as data source (http://influxdb:8086), database "telegraf"
 - create a dashboard to view your data! table "mqtt_consumer", topic is the mqtt topic you want to graph.
 
+# Helpful queries
+Show all mqtt topics recorded
+`curl -G 'http://localhost:8086/query?pretty=true' --data-urlencode "db=telegraf" --data-urlencode "q=SHOW TAG VALUES WITH KEY = \"topic\""`
+
+
