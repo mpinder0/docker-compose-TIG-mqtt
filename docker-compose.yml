@@ -4,11 +4,13 @@ services:
         image: eclipse-mosquitto:latest
         ports:
             - "1883:1883"
+        restart: unless-stopped
 
     influxdb:
         image: influxdb:latest
         ports:
             - "8086:8086"
+        restart: unless-stopped
         volumes:
             # Data persistence
             # sudo mkdir -p /srv/docker/influxdb/data
@@ -18,6 +20,7 @@ services:
         image: grafana/grafana:latest
         ports:
             - "3000:3000"
+        restart: unless-stopped
         volumes:
             # Data persistence
             # sudo mkdir -p /srv/docker/grafana/data; sudo chown 472:472 /srv/docker/grafana/data
@@ -25,5 +28,6 @@ services:
 
     telegraf:
         image: telegraf:latest
+        restart: unless-stopped
         volumes:
             - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
