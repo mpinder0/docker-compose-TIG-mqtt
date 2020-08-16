@@ -27,6 +27,14 @@ Connect via SSH then:
     - [apt install realvnc-vnc-server](https://www.raspberrypi.org/documentation/remote-access/vnc/)
     - raspi_config tool Resolution > Highest (was required for me before VNC would start working when headless)
 - apt install docker docker-compose
+- assign static IP address by editing `/etc/dhcpcd.conf` to include
+```
+interface wlan0
+
+static ip_address=192.168.0.3/24
+static routers=192.168.0.1
+static domain_name_servers=192.168.0.1
+```
 
 
 ## Docker compose
@@ -41,9 +49,10 @@ Connect via SSH then:
     - sudo mkdir -p /srv/docker/grafana/data
     - sudo chown 472:472 /srv/docker/grafana/data
 - useful docker compose commands - `sudo docker-compose`
-    - `up` (-d for as daemon)
+    - `up` (-d for detached/ background)
     - `down`
     - `ps` for container status'
+- note that compose file includes `restart: unless-stopped` option to run on startup
 
 ### MQTT & Influx DB
 Nothing to configure
@@ -53,6 +62,8 @@ See [telegraf.conf](telegraf.conf) with MQTT consumer as input, Influx DB as out
 - connects to MQTT broker and subscribes to topics of interest (e.g. "home/#", # is wildcard)
 - parse values as float
 - target database name configured (e.g. "telegraf")
+- note that `omit_hostname = true` will stop the "host" tag being added
+- rpi temperature logging copied from [TheMikeyMike's repo here](https://github.com/TheMickeyMike/raspberrypi-temperature-telegraf)
 
 ### Grafana
 - In browser go to "localhost:3000"
@@ -61,7 +72,16 @@ See [telegraf.conf](telegraf.conf) with MQTT consumer as input, Influx DB as out
 - create a dashboard to view your data! table "mqtt_consumer", topic is the mqtt topic you want to graph.
 
 # Helpful queries
+measure RPi core temp
+`/opt/vc/bin/vcgencmd measure_temp`
+or
+`/sys/class/thermal/thermal_zone0/temp`
+
 Show all mqtt topics recorded
 `curl -G 'http://localhost:8086/query?pretty=true' --data-urlencode "db=telegraf" --data-urlencode "q=SHOW TAG VALUES WITH KEY = \"topic\""`
+
+Last series values
+`select last(value) from mqtt_consumer group by *`
+In Grafana can be used with Table visualisation.
 
 
